@@ -46,9 +46,6 @@ class Circle(object):
         result += self.shuffled_list[-1]
         return "Circle: " + result
 
-    def __dict__(self):
-        return self.matches
-
 
 def read_data(file_name, player_list):
     with open(file_name) as player_file:
