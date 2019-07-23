@@ -7,6 +7,49 @@ from copy import deepcopy
 import subprocess as sp
 
 
+def clear_screen():
+    if platform.system() == "Linux":
+        sp.call('clear', shell=True)
+    elif platform.system() == "Windows":
+        os.system("CLS")
+    else:
+        sp.call('cls', shell=True)
+
+
+class Circle(object):
+    def __init__(self, player_list):
+        self.player_list = player_list
+        self.shuffled_list = deepcopy(player_list)
+        shuffle(self.shuffled_list)
+
+        self.players_string = ""
+        for player in self.player_list[:-1]:
+            self.players_string += player+", "
+        self.players_string += player_list[-1]
+
+        matches = {}
+        for i in range(len(player_list)-1):
+            matches[self.shuffled_list[i]] = self.shuffled_list[i+1]
+        matches[self.shuffled_list[-1]] = self.shuffled_list[0]
+        self.matches = matches
+
+    def get_target(self, name):
+        if name in self.matches.keys():
+            return self.matches[name]
+        else:
+            return None
+
+    def __repr__(self):
+        result = ""
+        for player in self.shuffled_list[:-1]:
+            result += player + ", "
+        result += self.shuffled_list[-1]
+        return "Circle: " + result
+
+    def __dict__(self):
+        return self.matches
+
+
 def read_data(file_name, player_list):
     with open(file_name) as player_file:
         for line in player_file:
@@ -22,39 +65,24 @@ def main():
 
     player_names = []
     read_data(file_name, player_names)
-    circle = deepcopy(player_names)
-    shuffle(circle)
-    print(circle)
 
-    players_string = ""
-    for player in player_names[:-1]:
-        players_string += player+", "
+    circle = Circle(player_names)
 
-    players_string += player_names[-1]
     done = False
     while not done:
         # Clears the screen
-        if platform.system() == "Linux":
-            sp.call('clear', shell=True)
-        elif platform.system() == "Windows":
-            os.system("CLS")
-        else:
-            sp.call('cls', shell=True)
-
+        clear_screen()
         print("Please Type in a name for player for whom you want the target.")
-        print("Valid Players: " + players_string)
+        print("Valid Players: " + circle.players_string)
         name = input()
         if name == "quit":
             break
-        if name in circle:
-            index = circle.index(name)
-            if index < len(circle) - 1:
-                print("Target is: " + circle[index+1])
-            else:
-                print("Target is: " + circle[0])
+        target = circle.get_target(name)
+        if target is not None:
+            print("Target is {}".format(target))
         else:
             print("Not a valid name. Please choose a name in following")
-            print(players_string)
+            print(circle.players_string)
         input("Press enter to continue")
 
 
