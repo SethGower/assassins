@@ -1,10 +1,10 @@
 #! /bin/python
-import sys
 import os
 import platform
-from random import shuffle
-from copy import deepcopy
 import subprocess as sp
+import sys
+from copy import deepcopy
+from random import shuffle
 
 
 def clear_screen():
